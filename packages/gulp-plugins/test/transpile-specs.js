@@ -54,7 +54,8 @@ describe('transpile-specs', function () {
       stderr.should.eql('');
       stdout.should.include('Finished');
 
-      const content = await readFile(`build-fixtures/lib/${files.classFile}.js`, 'utf8');
+      const fixture = require.resolve(`../../build-fixtures/lib/${files.classFile}.js`);
+      const content = await readFile(fixture, 'utf8');
       content.should.have.length.above(0);
       content.should.include('sourceMapping');
     });
@@ -65,23 +66,24 @@ describe('transpile-specs', function () {
       });
 
       it(`should be able to run transpiled ${name} code`, async function () {
-        const [stdout, stderr] = await exec(`node build-fixtures/lib/${files.classFile}-run.js`);
+        const fixture = require.resolve(`../../build-fixtures/lib/${files.classFile}-run.js`);
+        const [stdout, stderr] = await exec(`${process.execPath} ${fixture}`);
         print(stdout, stderr);
         stderr.should.equal('');
         stdout.should.include('hello world!');
       });
 
       it(`should be able to run transpiled ${name} tests`, async function () {
-        const [stdout, stderr] = await exec(
-          `${MOCHA} build-fixtures/test/${files.classFile}-specs.js`
-        );
+        const fixture = require.resolve(`../../build-fixtures/test/${files.classFile}-specs.js`);
+        const [stdout, stderr] = await exec(`${MOCHA} ${fixture}`);
         print(stdout, stderr);
         stderr.should.equal('');
         stdout.should.include('1 passing');
       });
 
       it(`should use sourcemap when throwing (${name})`, async function () {
-        const [stdout, stderr] = await exec(`node build-fixtures/lib/${files.classFile}-throw.js`);
+        const fixture = require.resolve(`../../build-fixtures/lib/${files.classFile}-throw.js`);
+        const [stdout, stderr] = await exec(`${process.execPath} ${fixture}`);
         print(stdout, stderr);
         let output = stdout + stderr;
         output.should.include('This is really bad!');
@@ -89,9 +91,10 @@ describe('transpile-specs', function () {
       });
 
       it(`should use sourcemap when throwing within mocha (${name})`, async function () {
-        const [stdout, stderr] = await exec(
-          `${MOCHA} build-fixtures/test/${files.classFile}-throw-specs.js`
+        const fixture = require.resolve(
+          `../../build-fixtures/test/${files.classFile}-throw-specs.js`
         );
+        const [stdout, stderr] = await exec(`${MOCHA} ${fixture}`);
         print(stdout, stderr);
         let output = stdout + stderr;
         output.should.include('This is really bad!');
@@ -117,7 +120,8 @@ describe('transpile-specs', function () {
 
   // TypeScript will not compile such errors, so no need to test
   it('should not detect a rtts-assert error', async function () {
-    const [stdout, stderr] = await exec('node build-fixtures/lib/a-rtts-assert-error.js');
+    const fixture = require.resolve('../../build-fixtures/lib/a-rtts-assert-error.js');
+    const [stdout, stderr] = await exec(`${process.execPath} ${fixture}`);
     print(stdout, stderr);
     stderr.should.equal('');
     stdout.should.include('123');
