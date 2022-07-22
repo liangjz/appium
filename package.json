@@ -136,7 +136,7 @@
     "gulp": "4.0.2",
     "handlebars": "4.7.7",
     "json-schema-to-typescript": "10.1.5",
-    "lerna": "4.0.0",
+    "lerna": "5.2.0",
     "lint-staged": "13.0.3",
     "log-symbols": "4.1.0",
     "mjpeg-consumer": "2.0.0",
